@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Component, type ReactNode, useEffect, useState } from "react";
 import { ArrowDown } from "lucide-react";
 import { href, type Locale, ui } from "@/lib/i18n";
 import { restaurant } from "@/config/site";
@@ -15,18 +15,33 @@ function canRun3D(): boolean {
   if (typeof window === "undefined") return false;
   // Override per test e presentazioni: ?scene=3d oppure ?scene=static
   const forced = new URLSearchParams(window.location.search).get("scene");
-  if (forced === "3d") return true;
   if (forced === "static") return false;
+  if (forced === "3d") return hasWebGL();
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
   const nav = navigator as Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } };
   if (nav.connection?.saveData) return false;
   if (typeof nav.deviceMemory === "number" && nav.deviceMemory < 3) return false;
   if ((navigator.hardwareConcurrency || 8) < 4) return false;
+  return hasWebGL();
+}
+
+function hasWebGL(): boolean {
   try {
     const c = document.createElement("canvas");
     return !!(c.getContext("webgl2") || c.getContext("webgl"));
   } catch {
     return false;
+  }
+}
+
+/** Se la scena 3D fallisce per qualsiasi motivo resta il fondo statico: la pagina non si rompe mai */
+class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    return this.state.failed ? null : this.props.children;
   }
 }
 
@@ -54,7 +69,11 @@ export default function Hero({ locale }: { locale: Locale }) {
     <section className="relative isolate h-[100svh] min-h-[620px] w-full overflow-hidden bg-[#1f1914]" aria-labelledby="hero-title">
       {/* Fondo: statico subito, 3D quando pronto */}
       <div className="hero-static absolute inset-0" aria-hidden="true" />
-      {mode === "3d" && <TavernaScene compact={compact} />}
+      {mode === "3d" && (
+        <SceneBoundary>
+          <TavernaScene compact={compact} />
+        </SceneBoundary>
+      )}
 
       {/* Velature per leggibilità */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#1a1511]/90 via-[#1a1511]/45 to-transparent" aria-hidden="true" />
