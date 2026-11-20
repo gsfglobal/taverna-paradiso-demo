@@ -1,0 +1,187 @@
+@import "tailwindcss";
+@import "@fontsource-variable/cormorant-garamond/wght.css";
+@import "@fontsource-variable/cormorant-garamond/wght-italic.css";
+@import "@fontsource-variable/manrope/wght.css";
+
+/* Design system "Lucanian Heritage" */
+@theme {
+  --color-ink: #221b16;         /* espresso profondo: fondo base */
+  --color-espresso: #302820;    /* Dark Espresso */
+  --color-cream: #f6f0e5;       /* Warm Cream */
+  --color-terra: #ad674a;       /* Terracotta */
+  --color-terra-deep: #94543a;  /* Terracotta per pulsanti (contrasto AA con il crema) */
+  --color-olive: #596148;       /* Olive Green */
+  --color-aglianico: #6b3038;   /* Aglianico Red */
+  --color-sand: #d4c2a7;        /* Stone Beige */
+  --color-gold: #ba945c;        /* Antique Gold */
+  --font-serif: "Cormorant Garamond Variable", "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Manrope Variable", "Manrope", system-ui, sans-serif;
+  --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  background: var(--color-ink);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-ink);
+  color: var(--color-cream);
+  font-family: var(--font-sans);
+  font-feature-settings: "kern";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Grana materica leggera */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--color-sand);
+}
+
+.display {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+}
+
+.hairline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 194, 167, 0.35), transparent);
+}
+
+/* Sezioni "carta": crema caldo con testo espresso */
+.paper {
+  background-color: var(--color-cream);
+  color: var(--color-ink);
+  background-image:
+    radial-gradient(120% 60% at 100% 0%, rgba(173, 103, 74, 0.08), transparent 60%),
+    radial-gradient(90% 60% at 0% 100%, rgba(89, 97, 72, 0.08), transparent 60%);
+}
+.paper .eyebrow {
+  color: #6f5f4b;
+}
+.paper ::selection {
+  background: var(--color-terra);
+  color: var(--color-cream);
+}
+
+/* Motivo ad archi (dal logo e dalla facciata del locale) */
+.arch-mask {
+  border-radius: 999px 999px 0 0;
+}
+
+/* Segnaposto fotografici materici */
+.photo-ph {
+  background:
+    radial-gradient(120% 80% at 70% 110%, rgba(173, 103, 74, 0.35), transparent 60%),
+    radial-gradient(90% 70% at 10% -10%, rgba(186, 148, 92, 0.2), transparent 60%),
+    linear-gradient(160deg, #3a3027 0%, #261f19 60%, #1d1712 100%);
+}
+.photo-ph[data-tone="wine"] {
+  background:
+    radial-gradient(110% 80% at 80% 100%, rgba(107, 48, 56, 0.75), transparent 65%),
+    linear-gradient(160deg, #2c2022 0%, #1b1415 100%);
+}
+.photo-ph[data-tone="stone"] {
+  background:
+    radial-gradient(120% 90% at 20% 0%, rgba(212, 194, 167, 0.28), transparent 60%),
+    linear-gradient(170deg, #3d342b 0%, #211b16 100%);
+}
+.photo-ph[data-tone="garden"] {
+  background:
+    radial-gradient(100% 80% at 30% 20%, rgba(89, 97, 72, 0.5), transparent 60%),
+    linear-gradient(170deg, #2a2b22 0%, #171812 100%);
+}
+
+/* Fondo statico della hero (fallback del 3D) */
+.hero-static {
+  background:
+    radial-gradient(55% 45% at 68% 62%, rgba(186, 148, 92, 0.28), transparent 70%),
+    radial-gradient(35% 30% at 72% 58%, rgba(255, 214, 160, 0.18), transparent 70%),
+    radial-gradient(80% 60% at 60% 110%, rgba(107, 48, 56, 0.45), transparent 70%),
+    linear-gradient(180deg, #2a221b 0%, #1d1712 100%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-static {
+    animation: candle 6s ease-in-out infinite alternate;
+  }
+}
+@keyframes candle {
+  from { filter: brightness(0.95); }
+  to { filter: brightness(1.08); }
+}
+
+/* Stato iniziale degli elementi animati: visibili senza JS */
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+  }
+}
+
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.5s var(--ease-luxe);
+}
+.link-underline:hover,
+.link-underline:focus-visible {
+  background-size: 100% 1px;
+}
+
+/* Marquee dei prodotti del territorio */
+.marquee {
+  display: flex;
+  width: max-content;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .marquee {
+    animation: marquee 48s linear infinite;
+  }
+}
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+
+input, select, textarea {
+  font: inherit;
+}
